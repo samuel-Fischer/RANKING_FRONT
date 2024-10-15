@@ -1,54 +1,78 @@
-const partidas = [
-  { adversarioA: "Roberto", adversarioB: "Fernando", pontosA: 5, pontosB: 2, Dupla: "Juan Brys" },
-  { adversarioA: "Antonio", adversarioB: "Carlos", pontosA: 3, pontosB: 5, Dupla: "Juan Brys" },
-  { adversarioA: "Marcos", adversarioB: "João", pontosA: 5, pontosB: 0, Dupla: "Pedro Lobato" },
-  { adversarioA: "Pedro", adversarioB: "Lucas", pontosA: 5, pontosB: 4, Dupla: "Jennifer Torchelsen" },
-  { adversarioA: "Ricardo", adversarioB: "José", pontosA: 2, pontosB: 5, Dupla: "Juan Brys" },
-  { adversarioA: "Fernando", adversarioB: "Antonio", pontosA: 5, pontosB: 3, Dupla: "Jennifer Torchelsen" },
-  { adversarioA: "Carlos", adversarioB: "Marcos", pontosA: 5, pontosB: 4, Dupla: "Juan Brys" },
-  { adversarioA: "João", adversarioB: "Pedro", pontosA: 5, pontosB: 3, Dupla: "Pedro Lobato" },
-];
+import axiosInstance from "@/api/axiosInstance";
+import { useEffect, useState } from "react";
 
-const HistoricoPartidas = () => {
+type MatchHistory = {
+  adversario1: string;
+  adversario2: string;
+  placarEquipe1: number;
+  placarEquipe2: number;
+  parceiro: string;
+  data: string;
+}
+
+const MatchHistory = ({ id }: { id: number }) => {
+  const [partidas, setPartidas] = useState<MatchHistory[]>([]);
+
+  useEffect(() => {
+    async function getPartidas() {
+      try {
+        const response = await axiosInstance.get(`/partidas/usuario/${id}`);
+        const data = response.data;
+        console.log(data);
+        setPartidas(data.map((partida: MatchHistory) => ({
+          adversario1: partida.adversario1,
+          adversario2: partida.adversario2,
+          placarEquipe1: partida.placarEquipe1,
+          placarEquipe2: partida.placarEquipe2,
+          parceiro: partida.parceiro,
+          data: partida.data
+        })));
+
+      } catch (error) {
+        console.error('Error getting matches', error);
+      }
+    }
+    getPartidas();
+  }, [id]);
+
+  console.log(partidas);
   return (
-    <div className="container mx-auto">
-      <table className="min-w-full table-auto border-collapse border border-gray-300 rounded-lg">
-        <thead className="border-collapse border border-gray-300">
-          <tr>
-            <th className="py-2 px-4 bg-gray-100">V/D</th>
-            <th className="py-2 px-4 bg-gray-100">Sua Dupla</th>
-            <th className="py-2 px-4 bg-gray-100">Pontos</th>
-            <th className="py-2 px-4 bg-gray-100">Adversáros 1</th>
-            <th className="py-2 px-4 bg-gray-100">Adversáros 2</th>
-          </tr>
-        </thead>
-        <tbody className="text-center">
-          {
-            partidas.map((usuario, index) => (
-              <tr key={index} className={usuario.pontosA > usuario.pontosB ? "bg-green-400" : "bg-red-400"}>
-                <td className="py-2 px-4 border border-gray-300">
-                  {usuario.pontosA > usuario.pontosB ? "V" : "D"}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {usuario.Dupla}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {usuario.pontosA} x {usuario.pontosB}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {usuario.adversarioA}
-                </td>
-                <td className="py-2 px-4 border border-gray-300">
-                  {usuario.adversarioB}
-                </td>
+    <div className="flex items-center justify-center">
+      <div className="overflow-x-auto relative shadow-md rounded-xl">
 
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+        <table className="min-w-full table-auto rounded-xl">
+          <thead className="border-collapse bg-gray-100">
+            <tr>
+              <th className="py-2 px-4">V/D</th>
+              <th className="py-2 px-4">Dupla</th>
+              <th className="py-2 px-4">Placar</th>
+              <th className="py-2 px-4">Adversáros</th>
+            </tr>
+          </thead>
+          <tbody className="text-center">
+            {
+              partidas.map((partida, index) => (
+                <tr key={index} className={partida.placarEquipe1 > partida.placarEquipe2 ? "bg-green-400" : "bg-red-400"}>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {partida.placarEquipe1 > partida.placarEquipe2 ? "V" : "D"}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {partida.parceiro}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {partida.placarEquipe1} x {partida.placarEquipe2}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {partida.adversario1}, {partida.adversario2}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default HistoricoPartidas;
+export default MatchHistory;

@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-// import HistoricoPartidas from '@/components/HistoricoPartidas';
 import perfil from '../home/perfil.png';
 import Image from 'next/image';
-// import { useRouter } from 'next/navigation';
 import withAuth from '@/components/withAuth';
-import HistoricoPartidas from '@/components/MatchHistory';
+import MatchHistory from '@/components/MatchHistory';
+import StatusBarGames from '@/components/StatusBarGames';
+import StatusBarRanking from '@/components/StatusBarRanking';
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -13,7 +13,7 @@ const getUserFromLocalStorage = () => {
 };
 
 interface User {
-  id: string;
+  id: number;
   nome: string;
   email: string;
   points: number;
@@ -34,7 +34,7 @@ const Perfil = () => {
         <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20 ml-10 my-10" />
         <div className="flex flex-col justify-center">
           <p className="text-white text-2xl font-bold ml-4">
-            {user?.nome || 'Usuario não encontrado'}
+            {user?.nome}
           </p>
           <span className="text-white text-sm ml-4 hover:text-gray-300 hover:cursor-pointer">
             Nível 3
@@ -62,10 +62,19 @@ const Perfil = () => {
         </div>
       </div>
 
+      <div className='flex flex-row flex-wrap text-2xl'>
+        <div className="flex bg-gray-100 shadow-md rounded-3xl m-5 p-10">
+          <StatusBarGames />
+        </div>
+        <div className="flex bg-gray-100 shadow-md rounded-3xl m-5 px-16 py-5">
+          <StatusBarRanking />
+        </div>
+      </div>
+
       <div className="flex columns-2">
         <div className="flex flex-col items-center px-3 justify-center">
-          <p className='font-bold text-2xl py-4'>Últimos Confrontos</p>
-          <HistoricoPartidas />
+          <p className="font-bold text-2xl py-4">Últimos Confrontos</p>
+          <MatchHistory id={user?.id} />
         </div>
       </div>
     </>
@@ -73,6 +82,3 @@ const Perfil = () => {
 }
 
 export default withAuth(Perfil);
-
-
-// retornar o status do jogador
