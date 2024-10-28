@@ -1,11 +1,14 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import perfil from '../home/perfil.png';
 import Image from 'next/image';
+
+import perfil from '../home/perfil.png';
 import withAuth from '@/components/withAuth';
 import MatchHistory from '@/components/MatchHistory';
 import StatusBarGames from '@/components/StatusBarGames';
 import StatusBarRanking from '@/components/StatusBarRanking';
+import Challenges from '@/components/Challenges';
+import axiosInstance from '@/api/axiosInstance';
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -20,13 +23,34 @@ interface User {
 }
 
 
-const Perfil = () => {
+const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const storedUser = getUserFromLocalStorage();
     setUser(storedUser);
   }, []);
+
+  useEffect(() => {
+    async function getPoints() {
+      if (user !== null) {
+        try {
+          const response = await axiosInstance.get(`/status/${user.id}`);
+          const data = response.data;
+          setUser({ ...user, points: data.pontos });
+        } catch (error) {
+          console.error('Error getting points', error);
+        }
+      }
+    }
+    getPoints();
+  }, [user]);
+  
+  const getRanking = (points: number) => {
+    return Math.max(7 - Math.floor(points / 500), 1);
+  };
+  
+  const userRanking = user ? getRanking(user.points) : null;
 
   return (
     <>
@@ -37,7 +61,7 @@ const Perfil = () => {
             {user?.nome}
           </p>
           <span className="text-white text-sm ml-4 hover:text-gray-300 hover:cursor-pointer">
-            Nível 3
+            Nível {userRanking}
           </span>
         </div>
 
@@ -62,7 +86,7 @@ const Perfil = () => {
         </div>
       </div>
 
-      <div className='flex flex-row flex-wrap text-2xl'>
+      <div className='flex flex-row flex-wrap text-3xl justify-center w-screen'>
         <div className="flex bg-gray-100 shadow-md rounded-3xl m-5 p-10">
           <StatusBarGames />
         </div>
@@ -71,14 +95,23 @@ const Perfil = () => {
         </div>
       </div>
 
-      <div className="flex columns-2">
-        <div className="flex flex-col items-center px-3 justify-center">
-          <p className="font-bold text-2xl py-4">Últimos Confrontos</p>
-          <MatchHistory id={user?.id} />
+      <div className='flex flex-row flex-wrap text-2xl justify-center w-screen'>
+        <div className="flex columns-2">
+          <div className="flex flex-col items-center px-3 justify-center">
+            <p className="font-bold text-2xl py-4">Últimos Confrontos</p>
+            <MatchHistory id={user?.id} />
+          </div>
+        </div>
+
+        <div className="flex columns-2">
+          <div className="flex flex-col items-center px-3 justify-center">
+            <p className="font-bold text-2xl pb-4 py-4">Desafios</p>
+            <Challenges />
+          </div>
         </div>
       </div>
     </>
   );
 }
 
-export default withAuth(Perfil);
+export default withAuth(Profile);
