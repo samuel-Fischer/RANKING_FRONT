@@ -1,10 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import axiosInstance from "@/api/axiosInstance";
 
+import axiosInstance from "@/api/axiosInstance";
 import perfil from "../app/home/perfil.png"
 
 interface Usuario {
+  id: number;
   classificacao: number;
   usuario: string;
   cidade: string;
@@ -49,7 +51,7 @@ const RankingTable = () => {
               <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}>
                 <td className="py-2 px-4 flex items-center">{index+1}.
                 <Image src={perfil} alt={`Foto de ${usuario.usuario}`} width={30} height={30} className="rounded-full mr-2 ms-3" />
-                {usuario.usuario}
+                <Link href={`profile/${usuario.id}`}>{usuario.usuario}</Link>
                 </td>
                 <td className="py-2 px-4">{usuario.cidade}</td>
                 <td className="py-2 px-4">{usuario.pontos}</td>
