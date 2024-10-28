@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-
 import { useState } from "react";
-import axiosInstance from "@/api/axiosInstance";
 
+import axiosInstance from "@/api/axiosInstance";
 import ModalInput from "./ModalInput";
 import { SearchBarOponents } from "./SearchBarOponents";
+import { X } from "lucide-react";
 
 type User = {
   id: number;
@@ -64,7 +64,7 @@ const MatchModal = ({ isVisible, onClose }: MatchModalProps) => {
       player1: { ...team2.player1, selected: false },
       player2: { ...team2.player2, selected: false },
     });
-    
+
     if (team === "team1") {
       setTeam1(prevState => ({
         ...prevState,
@@ -155,9 +155,11 @@ const MatchModal = ({ isVisible, onClose }: MatchModalProps) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="w-[500px] flex flex-col">
-        <button className="text-white text-xl place-self-end mr-1" onClick={onClose}>X</button>
-        <div className="flex flex-col items-center justify-center max-w-lg p-6 space-y-4 bg-white rounded-lg shadow-lg">
-          <div className="w-full">
+        <button className="flex items-end justify-end" onClick={onClose}>
+          <X className="text-gray-100 w-8 h-8 text-xl place-self-end" strokeWidth={3} />
+        </button>
+        <div className="flex flex-col max-w-lg p-6 space-y-4 bg-white rounded-lg shadow-lg">
+          <div className="w-full flex text-primary-blue justify-center">
             <p className="text-2xl font-bold text-center">Cadastrar Partida</p>
           </div>
 
