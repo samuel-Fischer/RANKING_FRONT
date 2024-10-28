@@ -10,6 +10,7 @@ import RankingTable from "@/components/RankingTable";
 import MatchModal from "@/components/MatchModal";
 import axiosInstance from "@/api/axiosInstance";
 import withAuth from "@/components/withAuth";
+import ModalSearchPlayers from "@/components/ModalSearchPlayers";
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -26,7 +27,8 @@ type User = {
 const Home = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showModal, setShowModal] = useState(false);
-    
+  const [showSearchBar, setShowSearchBar] = useState(false);
+
   const formatNumber = (num: number): string => {
     return new Intl.NumberFormat('pt-BR').format(num);
   };
@@ -60,7 +62,7 @@ const Home = () => {
   }
 
   const getRanking = (points: number) => {
-    return Math.min(Math.floor(points / 500) + 1, 8);
+    return Math.max(7 - Math.floor(points / 500), 1);
   };
 
   const userRanking = user ? getRanking(user.points) : null;
@@ -76,7 +78,7 @@ const Home = () => {
               </Image>
               <div className="flex flex-col justify-center">
                 <p className="text-white text-2xl font-bold ml-4 flex items-center gap-2">
-                    {user?.nome}
+                  {user?.nome}
                   <Link href={user?.nome ? "/" : "/"} className="flex items-center ps-2 gap-2 relative font-bold text-primary-gray text-xl">
                     {user?.nome ? <LogOut onClick={logout} /> : <UserCircle2 />}
                   </Link>
@@ -91,7 +93,7 @@ const Home = () => {
               <span className="text-white text-3xl font-bold">
                 Ranking
               </span>
-              <span className="text-white text-sm font-bold">
+              <span className="text-white text-sm font-semibold">
                 Nível {userRanking}
               </span>
             </div>
@@ -109,8 +111,9 @@ const Home = () => {
                 onClick={() => setShowModal(true)}>
                 Cadastrar Resultado
               </button>
-              <button className="flex w-full justify-center rounded-xl bg-white py-2.5 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200 mt-4">
-                Pesquisa
+              <button className="flex w-full justify-center rounded-xl bg-white py-2.5 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200 mt-4"
+                onClick={() => setShowSearchBar(true)}>
+                Pesquisar
               </button>
             </div>
           </div>
@@ -120,9 +123,6 @@ const Home = () => {
               <span className="text-3xl font-bold">
                 Ranking
               </span>
-              <span className="text-sm font-bold">
-                Nível 3
-              </span>
             </div>
             <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
               <RankingTable />
@@ -130,10 +130,10 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <ModalSearchPlayers isVisible={showSearchBar} onClose={() => setShowSearchBar(false)} />
       <MatchModal isVisible={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 }
 
 export default withAuth(Home);
-
