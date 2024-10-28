@@ -3,10 +3,15 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+      <div className="text-5xl pb-10 font-extrabold ...">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-400">
           Ranking de Padel
-        </h1>
+        </span>
+      </div>
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-lg w-full text-center">
+        {/* <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Ranking de Padel
+        </h1> */}
         <p className="text-gray-600 mb-6">
           Para continuar, por favor faça o login ou registre-se.
         </p>
