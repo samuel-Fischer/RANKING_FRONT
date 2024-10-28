@@ -11,7 +11,7 @@ export default function StatusBarGames() {
 
   return (
     <div className="flex flex-row">
-      <div className="grid grid-cols-3 text-button-blue text-2xl">
+      <div className="grid grid-cols-3 text-button-blue">
         <div className="flex flex-col items-center">
           <div className="flex font-semibold">
             <Flame  strokeWidth={3} />
