@@ -1,34 +1,39 @@
-"use client";
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+'use client';
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
-import perfil from '../home/perfil.png';
-import withAuth from '@/components/withAuth';
-import MatchHistory from '@/components/MatchHistory';
-import StatusBarGames from '@/components/StatusBarGames';
-import StatusBarRanking from '@/components/StatusBarRanking';
-import Challenges from '@/components/Challenges';
-import axiosInstance from '@/api/axiosInstance';
+import perfil from '../../home/perfil.png';
+import axiosInstance from "@/api/axiosInstance";
+import StatusBarGames from "@/components/StatusBarGames";
+import StatusBarRanking from "@/components/StatusBarRanking";
+import MatchHistory from "@/components/MatchHistory";
+import Challenges from "@/components/Challenges";
 
-const getUserFromLocalStorage = () => {
-  const user = localStorage.getItem('auth.user');
-  return user ? JSON.parse(user) : null;
-};
+interface Props {
+  params: { id: number };
+}
 
-interface User {
+type User = {
   id: number;
   nome: string;
   email: string;
   points: number;
-}
+};
 
-
-const Profile = () => {
+const Profile = ({ params }: Props) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const storedUser = getUserFromLocalStorage();
-    setUser(storedUser);
+    async function getUser() {
+      try {
+        const response = await axiosInstance.get(`/usuarios/${params.id}`);
+        const data = response.data;
+        setUser(data);
+      } catch (error) {
+        console.error('Error getting user', error);
+      }
+    }
+    getUser();
   }, []);
 
   useEffect(() => {
@@ -45,7 +50,7 @@ const Profile = () => {
     }
     getPoints();
   }, [user]);
-  
+
   const getRanking = (points: number) => {
     return Math.max(7 - Math.floor(points / 500), 1);
   };
@@ -55,7 +60,7 @@ const Profile = () => {
   return (
     <>
       <div className="flex bg-primary-blue">
-        <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-100 w-20 ml-10 my-10" />
+        <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20 ml-10 my-10" />
         <div className="flex flex-col justify-center">
           <p className="text-white text-2xl font-bold ml-4">
             {user?.nome}
@@ -80,8 +85,8 @@ const Profile = () => {
         <div className="flex-grow"></div>
 
         <div className="flex flex-col items-center justify-center text-2xl me-20">
-          <button className="flex w-full justify-center rounded-full bg-white py-2.5 px-16 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200 mt-4">
-            Pesquisar
+          <button className="flex w-full justify-center rounded-full bg-white py-2.5 px-10 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200">
+            Desafiar
           </button>
         </div>
       </div>
@@ -112,6 +117,6 @@ const Profile = () => {
       </div>
     </>
   );
-}
+};
 
-export default withAuth(Profile);
+export default Profile;

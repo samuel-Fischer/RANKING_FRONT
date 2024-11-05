@@ -35,7 +35,7 @@ const MatchHistory = ({ id }: { id: number }) => {
     getPartidas();
   }, [id]);
 
-  console.log(partidas);
+  // console.log(partidas);
   return (
     <div className="flex items-center justify-center">
       <div className="overflow-x-auto relative shadow-md rounded-xl">

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic';
 
 import axiosInstance from '@/api/axiosInstance';
+import { useRouter } from 'next/navigation';
 
 const PhoneInput = dynamic(() => import('react-phone-number-input/input'), {
   ssr: false,
@@ -23,6 +24,7 @@ type inputs = {
 export default function Example() {
   const { register, handleSubmit, setValue, reset } = useForm<inputs>({});
   const formRef = useRef(null);
+  const router = useRouter();
 
   async function onSubmit(data: inputs) {
     console.log(data);
@@ -36,6 +38,7 @@ export default function Example() {
       if (response.status === 200 || response.status === 201) {
         alert('Usuário criado com sucesso!');
         console.log('Usuário criado com sucesso!');
+        router.push('/login');
         reset();
       }
     } catch (error) {

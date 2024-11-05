@@ -1,6 +1,6 @@
 "use client";
 import axiosInstance from '@/api/axiosInstance';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface User {
   id: number;
@@ -17,7 +17,14 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('auth.user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -27,10 +34,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const data = response.data;
-      localStorage.setItem('auth.token', data.token.accessToken);
-      localStorage.setItem('auth.user', JSON.stringify(data.usuario));
+      console.log(data);
+      
 
-      setUser(data.usuario);
+      localStorage.setItem('auth.token', data.accessToken);
+      localStorage.setItem('auth.user', JSON.stringify(data));
+
+      setUser(data);
     } catch (error) {
       console.error('Login failed:', error);
       throw new Error('Login falhou');
@@ -38,7 +48,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth.token');
+    localStorage.removeItem('auth.user');
     setUser(null);
   };
 
