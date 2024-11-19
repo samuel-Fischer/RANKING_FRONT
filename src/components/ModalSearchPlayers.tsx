@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { X } from "lucide-react";
+import { SearchIcon, X } from "lucide-react";
 import { SearchBarOponents } from "./SearchBarOponents";
+import axiosInstance from "@/api/axiosInstance";
+import Image from "next/image";
+import Link from "next/link";
 
 type User = {
   id: number;
   name: string;
-  selected: boolean;
+  photo?: string;
 };
 
 type ModalSearchProps = {
@@ -17,10 +20,29 @@ type ModalSearchProps = {
 const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
   if (!isVisible) return null;
   const [suggestions, setSuggestions] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  function handleSelectPlayer(user: User) {
-    console.log(user.name);
-  }
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (searchTerm) {
+        try {
+          const response = await axiosInstance.get(`/usuarios/nomeOuApelido/${searchTerm}`);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const transformedSuggestions = response.data.map((user: any) => ({
+            ...user,
+            name: user.nome,
+          }));
+          setSuggestions(transformedSuggestions);
+        } catch (error) {
+          console.error('Error fetching user suggestions:', error);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    };
+
+    fetchSuggestions();
+  }, [searchTerm, setSuggestions]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -38,7 +60,37 @@ const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
 
           <div className="flex flex-col justify-between max-w-lg px-6 pb-6 bg-white rounded-lg shadow-lg h-full">
             <div className="flex p-4 bg-gray-100 rounded-lg w-full mb-4">
-              <SearchBarOponents setSuggestions={setSuggestions} suggestions={suggestions} handleUserClick={handleSelectPlayer} />
+              <div className="w-full flex flex-col items-center bg-gray-100 rounded-lg">
+                <div className="w-full border border-gray-300 rounded-sm">
+                  <label htmlFor="player-search" className="block text-center" />
+                  <div className="relative">
+                    <input
+                      id="player-search"
+                      placeholder="procurar por jogador"
+                      className="w-full pl-8 pb-1"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <SearchIcon className="absolute top-1/2 left-2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  </div>
+                </div>
+                <div className="w-full space-y-2 cursor-pointer">
+                  {suggestions.slice(0, 5).map((user) => (
+                    <Link href={`profile/${user.id}`}>
+                      <div key={user.id} className="flex items-center space-x-2 mt-2">
+                        {user?.photo ? (
+                          <Image src={user?.photo} alt={`Foto de ${user?.name}`} className="w-10 h-10 rounded-full"></Image>
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span>{user?.name[0]}</span>
+                          </div>
+                        )}
+                        <span>{user?.name}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="flex w-full mt-auto">

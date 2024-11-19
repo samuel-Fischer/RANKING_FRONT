@@ -9,6 +9,7 @@ import StatusBarGames from '@/components/StatusBarGames';
 import StatusBarRanking from '@/components/StatusBarRanking';
 import Challenges from '@/components/Challenges';
 import axiosInstance from '@/api/axiosInstance';
+import ModalSearchPlayers from '@/components/ModalSearchPlayers';
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -25,6 +26,7 @@ interface User {
 
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [showSearchBar, setShowSearchBar] = useState(false);
 
   useEffect(() => {
     const storedUser = getUserFromLocalStorage();
@@ -45,11 +47,11 @@ const Profile = () => {
     }
     getPoints();
   }, [user]);
-  
+
   const getRanking = (points: number) => {
     return Math.max(7 - Math.floor(points / 500), 1);
   };
-  
+
   const userRanking = user ? getRanking(user.points) : null;
 
   return (
@@ -67,20 +69,14 @@ const Profile = () => {
 
         <div className="flex items-end justify mb-5 text-xl">
           <span className="text-gray-300 pb-0.5 mx-10">
-            Cidade #1
-          </span>
-          <span className="text-gray-300 pb-0.5 me-10">
-            Estado #27
-          </span>
-          <span className="text-gray-300 pb-0.5">
-            País #132
+            6 Amigos
           </span>
         </div>
 
         <div className="flex-grow"></div>
 
         <div className="flex flex-col items-center justify-center text-2xl me-20">
-          <button className="flex w-full justify-center rounded-full bg-white py-2.5 px-16 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200 mt-4">
+          <button className="flex w-full justify-center rounded-full bg-white py-2.5 px-16 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200 mt-4" onClick={() => setShowSearchBar(true)}>
             Pesquisar
           </button>
         </div>
@@ -105,11 +101,12 @@ const Profile = () => {
 
         <div className="flex columns-2">
           <div className="flex flex-col items-center px-3 justify-top">
-            <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Desafios</p>
+            <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Notificações</p>
             <Challenges />
           </div>
         </div>
       </div>
+      <ModalSearchPlayers isVisible={showSearchBar} onClose={() => setShowSearchBar(false)} />
     </>
   );
 }
