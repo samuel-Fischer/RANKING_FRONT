@@ -7,7 +7,13 @@ import axiosInstance from "@/api/axiosInstance";
 import StatusBarGames from "@/components/StatusBarGames";
 import StatusBarRanking from "@/components/StatusBarRanking";
 import MatchHistory from "@/components/MatchHistory";
-import Challenges from "@/components/Challenges";
+// import Challenges from "@/components/Challenges";
+import { UserRoundPlus } from "lucide-react";
+
+const getUserFromLocalStorage = () => {
+  const user = localStorage.getItem('auth.user');
+  return user ? JSON.parse(user) : null;
+};
 
 interface Props {
   params: { id: number };
@@ -20,8 +26,24 @@ type User = {
   points: number;
 };
 
+type LoggedUser = {
+  id: number;
+  nome: string;
+  email: string;
+  points: number;
+};
+
 const Profile = ({ params }: Props) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loggedUser, setLoggedUser] = useState<LoggedUser | null>(null);
+  const [isFriend, setIsFriend] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const storedUser = getUserFromLocalStorage();
+    if (storedUser) {
+      setLoggedUser(storedUser);
+    }
+  }, []);
 
   useEffect(() => {
     async function getUser() {
@@ -51,10 +73,50 @@ const Profile = ({ params }: Props) => {
     getPoints();
   }, [user]);
 
+  useEffect(() => {
+    async function findFriends() {
+      if (loggedUser !== null) {
+        try {
+          const response = await axiosInstance.get(`amizades/status/${params.id}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+            }
+          }
+          );
+          const data = response.data;
+          setIsFriend(data); // Atualiza o estado com o valor retornado (True ou False)
+        } catch (error) {
+          console.error('Error finding friends', error);
+        }
+      }
+    }
+    findFriends();
+  }, [loggedUser, params.id]);
+
+  const handleChallenge = () => {
+    console.log("Desafiar foi clicado");
+    // Adicione a lógica para o desafio aqui
+  };
+
+  const handleAddFriend = () => {
+    try {
+      axiosInstance.post(`amizades`, {
+        amigoId: params.id,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+        }
+      }
+      );
+    } catch (error) {
+      console.error('Error adding friend', error);
+    }
+  };
+
   const getRanking = (points: number) => {
     return Math.max(7 - Math.floor(points / 500), 1);
   };
-  
+
   const userRanking = user ? getRanking(user.points) : null;
 
   return (
@@ -72,22 +134,28 @@ const Profile = ({ params }: Props) => {
 
         <div className="flex items-end justify mb-5 text-xl">
           <span className="text-gray-300 pb-0.5 mx-10">
-            Cidade #1
-          </span>
-          <span className="text-gray-300 pb-0.5 me-10">
-            Estado #27
-          </span>
-          <span className="text-gray-300 pb-0.5">
-            País #132
+            6 Amigos
           </span>
         </div>
 
         <div className="flex-grow"></div>
 
         <div className="flex flex-col items-center justify-center text-2xl me-20">
-          <button className="flex w-full justify-center rounded-full bg-white py-2.5 px-10 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200">
-            Desafiar
-          </button>
+          {isFriend ? (
+            <button
+              onClick={handleChallenge}
+              className="flex w-full justify-center rounded-full bg-white py-2.5 px-10 text-xl font-semibold leading-6 text-primary-blue shadow-sm hover:bg-blue-200"
+            >
+              Desafiar
+            </button>
+          ) : (
+            <button
+              onClick={handleAddFriend}
+              className="flex w-full justify-center rounded-full bg-green-500 py-2.5 ps-10 pe-7 text-xl font-semibold leading-6 text-white shadow-sm hover:bg-green-600"
+            >
+              Adicionar Amigo <UserRoundPlus className="ms-3" strokeWidth={2} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -108,12 +176,12 @@ const Profile = ({ params }: Props) => {
           </div>
         </div>
 
-        <div className="flex columns-2">
+        {/* <div className="flex columns-2">
           <div className="flex flex-col items-center px-3 justify-top">
             <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Desafios</p>
             <Challenges />
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
