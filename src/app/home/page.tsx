@@ -11,6 +11,7 @@ import MatchModal from "@/components/MatchModal";
 import axiosInstance from "@/api/axiosInstance";
 import withAuth from "@/components/withAuth";
 import ModalSearchPlayers from "@/components/ModalSearchPlayers";
+import FriendsList from "@/components/FriendsList";
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -128,6 +129,23 @@ const Home = () => {
               <RankingTable />
             </div>
           </div>
+
+          <div className="bg-primary-gray py-5 px-10">
+            <div className="flex items-center">
+              <span className="text-3xl font-bold">
+                Amigos
+              </span>
+              <span className="text-ml ms-2">
+                (11)
+              </span>
+            </div>
+            <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
+              <div className="flex flex-col items-center px-3 justify-top">
+                <FriendsList />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
       <ModalSearchPlayers isVisible={showSearchBar} onClose={() => setShowSearchBar(false)} />
