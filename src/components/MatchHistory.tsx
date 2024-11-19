@@ -53,16 +53,16 @@ const MatchHistory = ({ id }: { id: number }) => {
             {
               partidas.map((partida, index) => (
                 <tr key={index} className={partida.placarEquipe1 > partida.placarEquipe2 ? "bg-green-400" : "bg-red-400"}>
-                  <td className="py-2 px-4 border border-gray-300">
+                  <td className="py-2 px-4">
                     {partida.placarEquipe1 > partida.placarEquipe2 ? "V" : "D"}
                   </td>
-                  <td className="py-2 px-4 border border-gray-300">
+                  <td className="py-2 px-4">
                     {partida.parceiro}
                   </td>
-                  <td className="py-2 px-4 border border-gray-300">
+                  <td className="py-2 px-4">
                     {partida.placarEquipe1} x {partida.placarEquipe2}
                   </td>
-                  <td className="py-2 px-4 border border-gray-300">
+                  <td className="py-2 px-4">
                     {partida.adversario1}, {partida.adversario2}
                   </td>
                 </tr>
