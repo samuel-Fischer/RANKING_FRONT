@@ -1,5 +1,5 @@
 'use client';
-import React from "react";
+import React, { use } from "react";
 import { useEffect, useState } from "react";
 import { LogOut, UserCircle2 } from "lucide-react";
 import Image from "next/image";
@@ -22,6 +22,7 @@ type User = {
   id: string;
   nome: string;
   email: string;
+  foto: string;
   points: number;
 };
 
@@ -68,6 +69,10 @@ const Home = () => {
 
   const userRanking = user ? getRanking(user.points) : null;
 
+  const userPhoto = user?.foto
+  ? `http://localhost:3000/usuarios/foto/${user.foto}`
+  : perfil.src;
+
   return (
     <div className='h-screen bg-primary-gray'>
       <div className=''>
@@ -75,8 +80,13 @@ const Home = () => {
           <div className="flex-col relative h-screen bg-primary-blue">
             <div className="flex w-80">
               {/* <div className="absolute rounded-full bg-blue-200 w-20 h-20 mx-5 my-10"></div> */}
-              <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20 h-20 ml-5 my-10">
-              </Image>
+              <Image 
+              src={userPhoto} 
+              alt="Foto de Perfil" 
+              className="rounded-full bg-blue-200 w-20 h-20 ml-5 my-10"
+              width={80}
+              height={80}
+              />
               <div className="flex flex-col justify-center">
                 <p className="text-white text-2xl font-bold ml-4 flex items-center gap-2">
                   {user?.nome}

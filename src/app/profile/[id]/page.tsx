@@ -7,7 +7,6 @@ import axiosInstance from "@/api/axiosInstance";
 import StatusBarGames from "@/components/StatusBarGames";
 import StatusBarRanking from "@/components/StatusBarRanking";
 import MatchHistory from "@/components/MatchHistory";
-// import Challenges from "@/components/Challenges";
 import { UserRoundPlus } from "lucide-react";
 
 const getUserFromLocalStorage = () => {
@@ -23,6 +22,7 @@ type User = {
   id: number;
   nome: string;
   email: string;
+  foto: string;
   points: number;
 };
 
@@ -84,7 +84,7 @@ const Profile = ({ params }: Props) => {
           }
           );
           const data = response.data;
-          setIsFriend(data); // Atualiza o estado com o valor retornado (True ou False)
+          setIsFriend(data);
         } catch (error) {
           console.error('Error finding friends', error);
         }
@@ -119,10 +119,19 @@ const Profile = ({ params }: Props) => {
 
   const userRanking = user ? getRanking(user.points) : null;
 
+  const userPhoto = user?.foto
+    ? `http://localhost:3000/usuarios/foto/${user.foto}`
+    : perfil.src;
+
   return (
     <>
       <div className="flex bg-primary-blue">
-        <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20 ml-10 my-10" />
+        <Image
+          src={userPhoto}
+          alt="Foto de Perfil"
+          className="rounded-full bg-blue-200 w-20 ml-10 my-10"
+          width={80}
+          height={80} />
         <div className="flex flex-col justify-center">
           <p className="text-white text-2xl font-bold ml-4">
             {user?.nome}
@@ -175,13 +184,6 @@ const Profile = ({ params }: Props) => {
             <MatchHistory id={user?.id} />
           </div>
         </div>
-
-        {/* <div className="flex columns-2">
-          <div className="flex flex-col items-center px-3 justify-top">
-            <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Desafios</p>
-            <Challenges />
-          </div>
-        </div> */}
       </div>
     </>
   );

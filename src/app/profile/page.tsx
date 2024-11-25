@@ -20,6 +20,7 @@ interface User {
   id: number;
   nome: string;
   email: string;
+  foto: string;
   points: number;
 }
 
@@ -54,10 +55,19 @@ const Profile = () => {
 
   const userRanking = user ? getRanking(user.points) : null;
 
+  const userPhoto = user?.foto
+    ? `http://localhost:3000/usuarios/foto/${user.foto}`
+    : perfil.src;
+
   return (
     <>
       <div className="flex bg-primary-blue">
-        <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-100 w-20 ml-10 my-10" />
+        <Image
+          src={userPhoto}
+          alt="Foto de Perfil"
+          className="rounded-full bg-blue-200 w-20 ml-10 my-10"
+          width={80}
+          height={80} />
         <div className="flex flex-col justify-center">
           <p className="text-white text-2xl font-bold ml-4">
             {user?.nome}

@@ -30,7 +30,7 @@ const RankingTable = () => {
         console.error('Erro ao buscar usuários:', error);
       });
   }, []);
-  
+
   return (
     <div className="container mx-auto">
       <table className="min-w-full table-auto border-collapse border border-gray-300 rounded-lg">
@@ -49,9 +49,14 @@ const RankingTable = () => {
           {
             usuarios.filter(usuario => usuario.jogos > 0).slice(0, 17).map((usuario, index) => (
               <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-100"}>
-                <td className="py-2 px-4 flex items-center">{index+1}.
-                <Image src={perfil} alt={`Foto de ${usuario.usuario}`} width={30} height={30} className="rounded-full mr-2 ms-3" />
-                <Link href={`profile/${usuario.id}`}>{usuario.usuario}</Link>
+                <td className="py-2 px-4 flex items-center">{index + 1}.
+                  <Image
+                    src={usuario.foto || perfil}
+                    alt={`Foto de ${usuario.usuario}`}
+                    className="rounded-full mr-2 ms-3"
+                    width={40}
+                    height={40} />
+                  <Link href={`profile/${usuario.id}`}>{usuario.usuario}</Link>
                 </td>
                 <td className="py-2 px-4">{usuario.cidade}</td>
                 <td className="py-2 px-4">{usuario.pontos}</td>
