@@ -14,8 +14,22 @@ type FriendRequests = {
   time: string;
 };
 
-const Challenges = () => {
+type ChallengerRequests = {
+  id: number;
+  name: string;
+  photo?: string;
+  text: "te desafiou para uma partida.";
+  time: string;
+};
+
+type User = {
+  id: number;
+};
+
+const Challenges = ({ id }: { id: number }) => {
   const [friendRequests, setFriendRequests] = useState<FriendRequests[]>([]);
+  const [challengerRequests, setChallengerRequests] = useState<ChallengerRequests[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     async function FriendRequests() {
@@ -39,6 +53,33 @@ const Challenges = () => {
       }
     }
     FriendRequests();
+  }, []);
+
+  useEffect(() => {
+    if (id) {
+      setChallengerRequests([{ id: id, name: '', text: "te desafiou para uma partida.", time: '' }]);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    async function ChallengerRequest() {
+      try {
+        const response = await axiosInstance.get(`/mensagens/${user?.id}`);
+        const data = response.data;
+        console.log(data);
+        const ChallengerRequestsData: ChallengerRequests[] = data.map((request: any) => ({
+          id: request.id,
+          name: request.usuario.nome,
+          photo: request.usuario.foto,
+          text: "te desafiou para uma partida."
+        }));
+        setChallengerRequests(ChallengerRequestsData);
+      }
+      catch (error) {
+        console.error('Error getting friend requests', error);
+      }
+    }
+    ChallengerRequest();
   }, []);
 
   function acceptFriendRequest(id: number) {
@@ -72,6 +113,7 @@ const Challenges = () => {
   return (
     <div className='flex flex-col mx-10 px-5 pt-5 pb-1 bg-gray-100 shadow-md rounded-3xl'>
       {friendRequests.map((frinedR) => (
+
         <div key={frinedR.id}>
           <div className="flex pb-4">
             <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20" />
@@ -91,6 +133,31 @@ const Challenges = () => {
                 <Check strokeWidth={3} className='text-green-500 w-8 h-8 hover:text-green-400 hover:cursor-pointer' onClick={() => acceptFriendRequest(frinedR.id)} />
                 <X strokeWidth={3} className='text-red-500 w-8 h-8 hover:text-red-400 hover:cursor-pointer' onClick={() => rejectFriendRequest(frinedR.id)} />
               </div>
+            </div>
+          </div>
+          <div className="mb-4" style={{ width: '100%', height: '2px', backgroundColor: 'LightGray' }}></div>
+        </div>
+      ))}
+      {challengerRequests.map((challengerR) => (
+        <div key={challengerR.id}>
+          <div className="flex pb-4">
+            <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20" />
+            <div className="flex flex-col ps-4 justify-center">
+              <div className='flex flex-row'>
+                <p className="text-2xl font-bold text-primary-blue">
+                  {challengerR.name}
+                </p>
+                <p className="text-2xl ms-2">
+                  {challengerR.text}
+                </p>
+              </div>
+              <span className="text-sm">
+                {challengerR.time}
+              </span>
+              {/* <div className='flex flex-row justify-end'>
+                <Check strokeWidth={3} className='text-green-500 w-8 h-8 hover:text-green-400 hover:cursor-pointer' />
+                <X strokeWidth={3} className='text-red-500 w-8 h-8 hover:text-red-400 hover:cursor-pointer' />
+              </div> */}
             </div>
           </div>
           <div className="mb-4" style={{ width: '100%', height: '2px', backgroundColor: 'LightGray' }}></div>

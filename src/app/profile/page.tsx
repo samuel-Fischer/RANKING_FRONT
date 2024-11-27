@@ -24,7 +24,6 @@ interface User {
   points: number;
 }
 
-
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
@@ -112,7 +111,7 @@ const Profile = () => {
         <div className="flex columns-2">
           <div className="flex flex-col items-center px-3 justify-top">
             <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Notificações</p>
-            <Challenges />
+            <Challenges id={user?.id} />
           </div>
         </div>
       </div>

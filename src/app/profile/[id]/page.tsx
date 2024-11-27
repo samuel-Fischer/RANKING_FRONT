@@ -94,8 +94,21 @@ const Profile = ({ params }: Props) => {
   }, [loggedUser, params.id]);
 
   const handleChallenge = () => {
-    console.log("Desafiar foi clicado");
-    // Adicione a lógica para o desafio aqui
+    try {
+      axiosInstance.post(`mensagens`, {
+        remetenteId: loggedUser?.id,
+        destinatarioId: params.id,
+        mensagem: `Gostaria de desafiar você para uma partida!`,
+        tipo: "desafio"
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+        }
+      }
+      );
+    } catch (error) {
+      console.error('Error challenging', error);
+    }
   };
 
   const handleAddFriend = () => {
@@ -173,7 +186,7 @@ const Profile = ({ params }: Props) => {
           <StatusBarGames />
         </div>
         <div className="flex bg-gray-100 shadow-md rounded-3xl m-5 px-16 py-5">
-          <StatusBarRanking />
+          <StatusBarRanking id={user?.id} />
         </div>
       </div>
 
