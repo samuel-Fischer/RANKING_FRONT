@@ -2,14 +2,15 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
 import { useAuth } from '@/context/AuthContext';
+import { Eye, EyeClosed } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [ email, setEmail ] = useState('');
-  const [ password, setPassword ] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -56,10 +57,10 @@ export default function LoginPage() {
                   Senha
                 </label>
               </div>
-              <div>
+              <div className="relative">
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="senha"
                   autoComplete="current-password"
                   value={password}
@@ -67,6 +68,13 @@ export default function LoginPage() {
                   className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-blue sm:text-sm sm:leading-6"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-2"
+                >
+                  {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
+                </button>
               </div>
               <div className="flex text-sm justify-end">
                 <Link href="#" className="font-semibold text-primary-blue hover:text-blue-700">
