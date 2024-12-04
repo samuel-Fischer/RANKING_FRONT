@@ -56,15 +56,13 @@ const Challenges = ({ id }: { id: number }) => {
   }, []);
 
   useEffect(() => {
-    if (id) {
-      setChallengerRequests([{ id: id, name: '', text: "te desafiou para uma partida.", time: '' }]);
-    }
-  }, [id]);
-
-  useEffect(() => {
     async function ChallengerRequest() {
       try {
-        const response = await axiosInstance.get(`/mensagens/${user?.id}`);
+        const response = await axiosInstance.get(`/mensagens/desafios`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+          }
+        });
         const data = response.data;
         console.log(data);
         const ChallengerRequestsData: ChallengerRequests[] = data.map((request: any) => ({
@@ -77,6 +75,32 @@ const Challenges = ({ id }: { id: number }) => {
       }
       catch (error) {
         console.error('Error getting friend requests', error);
+      }
+    }
+    ChallengerRequest();
+  }, []);
+
+  useEffect(() => {
+    async function ChallengerRequest() {
+      try {
+        const response = await axiosInstance.get(`/mensagens/desafios`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+          }
+        });
+        const data = response.data;
+        console.log(data);
+        const ChallengerRequestsData: ChallengerRequests[] = data.map((request: any) => ({
+          id: request.id,
+          name: request.remetente.nome,
+          photo: request.remetente.foto,
+          text: request.mensagem,
+          time: request.data
+        }));
+        setChallengerRequests(ChallengerRequestsData);
+      }
+      catch (error) {
+        console.error('Error getting challenger requests', error);
       }
     }
     ChallengerRequest();
@@ -110,6 +134,22 @@ const Challenges = ({ id }: { id: number }) => {
     }
   }
 
+  function formatTimeAgo(time: string): import("react").ReactNode {
+    const now = new Date();
+    const past = new Date(time);
+    const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+    if (diff < 60) {
+      return `${diff} seconds ago`;
+    } else if (diff < 3600) {
+      return `${Math.floor(diff / 60)} minutes ago`;
+    } else if (diff < 86400) {
+      return `${Math.floor(diff / 3600)} hours ago`;
+    } else {
+      return `${Math.floor(diff / 86400)} days ago`;
+    }
+  }
+
   return (
     <div className='flex flex-col mx-10 px-5 pt-5 pb-1 bg-gray-100 shadow-md rounded-3xl'>
       {friendRequests.map((frinedR) => (
@@ -138,6 +178,7 @@ const Challenges = ({ id }: { id: number }) => {
           <div className="mb-4" style={{ width: '100%', height: '2px', backgroundColor: 'LightGray' }}></div>
         </div>
       ))}
+
       {challengerRequests.map((challengerR) => (
         <div key={challengerR.id}>
           <div className="flex pb-4">
@@ -151,9 +192,9 @@ const Challenges = ({ id }: { id: number }) => {
                   {challengerR.text}
                 </p>
               </div>
-              <span className="text-sm">
-                {challengerR.time}
-              </span>
+                <span className="text-sm">
+                {formatTimeAgo(challengerR.time)}
+                </span>
               {/* <div className='flex flex-row justify-end'>
                 <Check strokeWidth={3} className='text-green-500 w-8 h-8 hover:text-green-400 hover:cursor-pointer' />
                 <X strokeWidth={3} className='text-red-500 w-8 h-8 hover:text-red-400 hover:cursor-pointer' />
