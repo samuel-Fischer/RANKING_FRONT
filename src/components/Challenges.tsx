@@ -44,6 +44,7 @@ const Challenges = ({ id }: { id: number }) => {
           id: request.id,
           name: request.usuario.nome,
           photo: request.usuario.foto,
+          time: request.dataSolicitacao,
           text: "te enviou uma solicitação de amizade."
         }));
         setFriendRequests(friendRequestsData);
@@ -55,30 +56,30 @@ const Challenges = ({ id }: { id: number }) => {
     FriendRequests();
   }, []);
 
-  useEffect(() => {
-    async function ChallengerRequest() {
-      try {
-        const response = await axiosInstance.get(`/mensagens/desafios`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
-          }
-        });
-        const data = response.data;
-        console.log(data);
-        const ChallengerRequestsData: ChallengerRequests[] = data.map((request: any) => ({
-          id: request.id,
-          name: request.usuario.nome,
-          photo: request.usuario.foto,
-          text: "te desafiou para uma partida."
-        }));
-        setChallengerRequests(ChallengerRequestsData);
-      }
-      catch (error) {
-        console.error('Error getting friend requests', error);
-      }
-    }
-    ChallengerRequest();
-  }, []);
+  // useEffect(() => {
+  //   async function ChallengerRequest() {
+  //     try {
+  //       const response = await axiosInstance.get(`/mensagens/desafios`, {
+  //         headers: {
+  //           'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+  //         }
+  //       });
+  //       const data = response.data;
+  //       console.log(data);
+  //       const ChallengerRequestsData: ChallengerRequests[] = data.map((request: any) => ({
+  //         id: request.id,
+  //         name: request.usuario.nome,
+  //         photo: request.usuario.foto,
+  //         text: "te desafiou para uma partida."
+  //       }));
+  //       setChallengerRequests(ChallengerRequestsData);
+  //     }
+  //     catch (error) {
+  //       console.error('Error getting friend requests', error);
+  //     }
+  //   }
+  //   ChallengerRequest();
+  // }, []);
 
   useEffect(() => {
     async function ChallengerRequest() {
@@ -156,7 +157,15 @@ const Challenges = ({ id }: { id: number }) => {
 
         <div key={frinedR.id}>
           <div className="flex pb-4">
-            <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20" />
+            <Image
+              src={frinedR.photo || perfil} // Usa a foto ou uma imagem padrão.
+              alt={`Foto de perfil de ${frinedR.name}`}
+              className="rounded-full bg-blue-200 w-20 h-20"
+              width={80} // Altura e largura definidas.
+              height={80}
+              unoptimized // Necessário para suportar base64 com Image.
+              priority
+            />
             <div className="flex flex-col ps-4 justify-center">
               <div className='flex flex-row'>
                 <p className="text-2xl font-bold text-primary-blue">
@@ -167,7 +176,7 @@ const Challenges = ({ id }: { id: number }) => {
                 </p>
               </div>
               <span className="text-sm">
-                {frinedR.time}
+                {formatTimeAgo(frinedR.time)}
               </span>
               <div className='flex flex-row justify-end'>
                 <Check strokeWidth={3} className='text-green-500 w-8 h-8 hover:text-green-400 hover:cursor-pointer' onClick={() => acceptFriendRequest(frinedR.id)} />
@@ -182,7 +191,15 @@ const Challenges = ({ id }: { id: number }) => {
       {challengerRequests.map((challengerR) => (
         <div key={challengerR.id}>
           <div className="flex pb-4">
-            <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-20" />
+            <Image
+              src={challengerR.photo || perfil} // Usa a foto ou uma imagem padrão.
+              alt={`Foto de perfil de ${challengerR.name}`}
+              className="rounded-full bg-blue-200 w-20 h-20"
+              width={80} // Altura e largura definidas.
+              height={80}
+              unoptimized // Necessário para suportar base64 com Image.
+              priority
+            />
             <div className="flex flex-col ps-4 justify-center">
               <div className='flex flex-row'>
                 <p className="text-2xl font-bold text-primary-blue">
@@ -192,9 +209,9 @@ const Challenges = ({ id }: { id: number }) => {
                   {challengerR.text}
                 </p>
               </div>
-                <span className="text-sm">
+              <span className="text-sm">
                 {formatTimeAgo(challengerR.time)}
-                </span>
+              </span>
               {/* <div className='flex flex-row justify-end'>
                 <Check strokeWidth={3} className='text-green-500 w-8 h-8 hover:text-green-400 hover:cursor-pointer' />
                 <X strokeWidth={3} className='text-red-500 w-8 h-8 hover:text-red-400 hover:cursor-pointer' />
