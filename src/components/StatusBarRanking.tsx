@@ -10,6 +10,10 @@ const getUserFromLocalStorage = () => {
   return user ? JSON.parse(user) : null;
 };
 
+interface StatusBarRankingProps {
+  userId: number;
+}
+
 interface User {
   id: number;
   nome: string;
@@ -25,7 +29,7 @@ interface Position {
   position: number;
 }
 
-const StatusBarRanking = () => {
+const StatusBarRanking = ({ userId }: StatusBarRankingProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [points, setPoints] = useState<Points | null>(null);
   const [position, setPosition] = useState<Position | null>(null);
@@ -43,7 +47,7 @@ const StatusBarRanking = () => {
     async function getPosition() {
       if (user?.id) {
         try {
-          const response = await axiosInstance.get(`status/position/${user.id}`);
+          const response = await axiosInstance.get(`status/position/${userId}`);
           const data = response.data;
           setPosition({ position: data.position });
         } catch (error) {
@@ -58,7 +62,7 @@ const StatusBarRanking = () => {
     async function getPoints() {
       if (user?.id) {
         try {
-          const response = await axiosInstance.get(`status/${user.id}`);
+          const response = await axiosInstance.get(`status/${userId}`);
           const data = response.data;
           setPoints({ points: data.pontos });
         } catch (error) {

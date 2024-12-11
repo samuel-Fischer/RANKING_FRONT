@@ -124,10 +124,10 @@ const Profile = () => {
 
       <div className='flex flex-row flex-wrap text-3xl justify-center w-screen m-5'>
         <div className="flex bg-gray-100 shadow-md rounded-3xl m-5 p-10">
-          <StatusBarGames />
+          <StatusBarGames userId={user?.id} />
         </div>
         <div className="flex bg-gray-100 shadow-md rounded-3xl m-5 px-16 py-5">
-          <StatusBarRanking />
+          <StatusBarRanking userId={user?.id} />
         </div>
       </div>
 
@@ -135,14 +135,14 @@ const Profile = () => {
         <div className="flex columns-2">
           <div className="flex flex-col items-center px-3 justify-top">
             <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Últimos Confrontos</p>
-            <MatchHistory id={user?.id} />
+            <MatchHistory id={user?.id ?? 0} />
           </div>
         </div>
 
         <div className="flex columns-2">
           <div className="flex flex-col items-center px-3 justify-top">
             <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Notificações</p>
-            <Challenges id={user?.id} />
+            <Challenges id={user?.id ?? 0} />
           </div>
         </div>
       </div>

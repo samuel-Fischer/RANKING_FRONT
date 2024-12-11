@@ -2,6 +2,10 @@ import axiosInstance from "@/api/axiosInstance";
 import { Flag, Flame, Medal } from "lucide-react";
 import { useEffect, useState } from "react";
 
+interface StatusBarGamesProps {
+  userId: number;
+}
+
 interface User {
   id: number;
   nome: string;
@@ -20,7 +24,7 @@ const getUserFromLocalStorage = () => {
   return user ? JSON.parse(user) : null;
 };
 
-export default function StatusBarGames() {
+export default function StatusBarGames({ userId }: StatusBarGamesProps) {
   const [user, setUser] = useState<User | null>(null);
   const [games, setGames] = useState<Games | null>(null);
 
@@ -37,7 +41,7 @@ export default function StatusBarGames() {
     async function getGames() {
       if (user?.id) {
         try {
-          const response = await axiosInstance.get(`status/${user.id}`);
+          const response = await axiosInstance.get(`status/${userId}`);
           const data = response.data;
           setGames(data);
         } catch (error) {
