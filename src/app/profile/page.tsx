@@ -10,6 +10,7 @@ import StatusBarRanking from '@/components/StatusBarRanking';
 import Challenges from '@/components/Challenges';
 import axiosInstance from '@/api/axiosInstance';
 import ModalSearchPlayers from '@/components/ModalSearchPlayers';
+import { ArrowLeft } from 'lucide-react';
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -24,8 +25,13 @@ interface User {
   points: number;
 }
 
+interface CountFriends {
+  count: number;
+}
+
 const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [friends, setFriends] = useState<CountFriends | null>(null);
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   useEffect(() => {
@@ -48,6 +54,26 @@ const Profile = () => {
     getPoints();
   }, [user]);
 
+  useEffect(() => {
+    async function getCountFriends() {
+      if (user !== null) {
+        try {
+          const response = await axiosInstance.get(`/amizades/count/${user.id}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+              },
+            });
+          const data = response.data;
+          setFriends({ count: data.count });
+        } catch (error) {
+          console.error('Error getting friends count', error);
+        }
+      }
+    }
+    getCountFriends();
+  }, [user]);
+
   const getRanking = (points: number) => {
     return Math.max(7 - Math.floor(points / 500), 1);
   };
@@ -61,6 +87,11 @@ const Profile = () => {
   return (
     <>
       <div className="flex bg-primary-blue">
+        <div className="flex m-3 text-blue-300">
+          <button onClick={() => window.location.href = '/home'}>
+            <ArrowLeft size={40} strokeWidth={2} />
+          </button>
+        </div>
         <Image
           src={userPhoto}
           alt="Foto de Perfil"
@@ -78,7 +109,7 @@ const Profile = () => {
 
         <div className="flex items-end justify mb-5 text-xl">
           <span className="text-gray-300 pb-0.5 mx-10">
-            6 Amigos
+            {friends?.count} Amigos
           </span>
         </div>
 

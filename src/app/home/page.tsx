@@ -24,10 +24,16 @@ type User = {
   email: string;
   foto: string;
   points: number;
+  position: number;
 };
+
+interface CountFriends {
+  count: number;
+}
 
 const Home = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [friends, setFriends] = useState<CountFriends | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
 
@@ -57,6 +63,41 @@ const Home = () => {
     getPoints();
   }, [user]);
 
+  useEffect(() => {
+    async function getCountFriends() {
+      if (user !== null) {
+        try {
+          const response = await axiosInstance.get(`/amizades/count/${user.id}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+              },
+            });
+          const data = response.data;
+          setFriends({ count: data.count });
+        } catch (error) {
+          console.error('Error getting friends count', error);
+        }
+      }
+    }
+    getCountFriends();
+  }, [user]);
+
+  useEffect(() => {
+    async function getPosition() {
+      if (user !== null) {
+        try {
+          const response = await axiosInstance.get(`/status/position/${user.id}`);
+          const data = response.data;
+          setUser({ ...user, position: data.position });
+        } catch (error) {
+          console.error('Error getting position', error);
+        }
+      }
+    }
+    getPosition();
+  }, [user]);
+
   function logout() {
     localStorage.removeItem('auth.user');
     localStorage.removeItem('auth.token');
@@ -70,8 +111,8 @@ const Home = () => {
   const userRanking = user ? getRanking(user.points) : null;
 
   const userPhoto = user?.foto
-  ? `http://localhost:3000/usuarios/foto/${user.foto}`
-  : perfil.src;
+    ? `http://localhost:3000/usuarios/foto/${user.foto}`
+    : perfil.src;
 
   return (
     <div className='h-screen bg-primary-gray'>
@@ -80,12 +121,12 @@ const Home = () => {
           <div className="flex-col relative h-screen bg-primary-blue">
             <div className="flex w-80">
               {/* <div className="absolute rounded-full bg-blue-200 w-20 h-20 mx-5 my-10"></div> */}
-              <Image 
-              src={userPhoto} 
-              alt="Foto de Perfil" 
-              className="rounded-full bg-blue-200 w-20 h-20 ml-5 my-10"
-              width={80}
-              height={80}
+              <Image
+                src={userPhoto}
+                alt="Foto de Perfil"
+                className="rounded-full bg-blue-200 w-20 h-20 ml-5 my-10"
+                width={80}
+                height={80}
               />
               <div className="flex flex-col justify-center">
                 <p className="text-white text-2xl font-bold ml-4 flex items-center gap-2">
@@ -110,10 +151,10 @@ const Home = () => {
             </div>
             <div className="flex flex-col items-center justify-center mt-20 text-2xl">
               <span className="text-white pb-0.5">
-                Pontos: {formatNumber(user?.points ?? 0)}
+                Posição #{user?.position}
               </span>
               <span className="text-white pb-0.5">
-                Posição #27
+                Pontos: {formatNumber(user?.points ?? 0)}
               </span>
             </div>
 
@@ -146,7 +187,7 @@ const Home = () => {
                 Amigos
               </span>
               <span className="text-ml ms-2">
-                (11)
+                ({friends?.count})
               </span>
             </div>
             <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
