@@ -16,17 +16,17 @@ type ModalSearchProps = {
 };
 
 const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
-  if (!isVisible) return null;
-
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  if (!isVisible) return null;
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchTerm) {
         try {
           const response = await axiosInstance.get(`/usuarios/nomeOuApelido/${searchTerm}`);
-          const transformedSuggestions = response.data.map((user: any) => ({
+          const transformedSuggestions = response.data.map((user: { id: number; nome: string; foto?: string }) => ({
             id: user.id,
             name: user.nome,
             photo: user.foto ? `http://localhost:3000/usuarios/foto/${user.foto}` : null, // Construção da URL completa
