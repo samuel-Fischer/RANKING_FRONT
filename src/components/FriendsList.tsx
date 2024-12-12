@@ -108,46 +108,46 @@ const FriendsList = () => {
         theme="light"
         transition={Slide}
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 items-center justify-center gap-4 mb-4">
-        {friends.slice(0, 4).map((friend) => (
-          <div
-            className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-52 h-64 flex flex-col items-center"
-            key={friend.id}
-          >
-            <div className="flex justify-center mt-4">
-              <Image
-                src={
-                  friend.foto
-                    ? `http://localhost:3000/usuarios/foto/${friend.foto}`
-                    : perfil.src
-                }
-                alt="Foto do amigo"
-                width={80}
-                height={80}
-                className="rounded-full"
-              />
-            </div>
-            <div className="flex flex-col mt-5 text-center">
-              <p className="text-primary-blue text-2xl font-bold">{friend.nome}</p>
-              <span className="text-gray-400 text-sm hover:text-gray-300 hover:cursor-pointer">
-                <Link
-                  href={`/profile/${friend.id}`}
-                  className="relative"
-                >
-                  Ver Perfil
-                </Link>
-              </span>
-              {/* <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.pontos ?? 0)}</span> */}
-              <div className="flex justify-center">
-                <button
-                  onClick={() => handleChallenge(friend.id)}
-                  className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4">
-                  Desafiar
-                </button>
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full pb-4">
+
+          {friends.map((friend) => (
+            <div
+              className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-48 h-64 flex flex-col items-center"
+              key={friend.id}
+            >
+              <div className="flex justify-center mt-4">
+                <Image
+                  src={
+                    friend.foto
+                      ? `http://localhost:3000/usuarios/foto/${friend.foto}`
+                      : perfil.src
+                  }
+                  alt="Foto do amigo"
+                  width={80}
+                  height={80}
+                  className="rounded-full"
+                />
+              </div>
+              <div className="flex flex-col mt-5 text-center">
+                <p className="text-primary-blue text-xl font-bold">{friend.nome}</p>
+                <span className="text-gray-400 text-sm hover:text-gray-300 hover:cursor-pointer">
+                  <Link href={`/profile/${friend.id}`} className="relative">
+                    Ver Perfil
+                  </Link>
+                </span>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => handleChallenge(friend.id)}
+                    className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4"
+                  >
+                    Desafiar
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </>
   );

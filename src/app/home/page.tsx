@@ -92,10 +92,10 @@ const Home = () => {
 
   return (
     <div className='h-screen bg-primary-gray'>
-      <div className=''>
+      <div className='bg-primary-gray'>
         <div className="flex">
-          <div className="flex-col relative h-screen bg-primary-blue">
-            <div className="flex w-80">
+          <div className="flex-col fixed min-h-screen bg-primary-blue sm:w-64 md:w-80">
+            <div className="flex">
               {/* <div className="absolute rounded-full bg-blue-200 w-20 h-20 mx-5 my-10"></div> */}
               <Image
                 src={userPhoto}
@@ -146,27 +146,26 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap bg-primary-gray">
-
-            <div className="bg-primary-gray py-5 px-10">
+          <div className="flex flex-wrap md:space-x-6 bg-primary-gray ml-80 p-4">
+            <div className="flex flex-col flex-grow bg-primary-gray py-5 me-10">
               <div className="flex flex-col items-start">
-                <span className="text-3xl font-bold">
-                  Ranking
-                </span>
+                <span className="text-3xl font-bold">Ranking</span>
               </div>
               <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
                 <RankingTable />
               </div>
             </div>
 
-            <div className="bg-primary-gray py-5 px-10">
-              <div className="flex items-center">
-                <span className="text-3xl font-bold">
-                  Amigos
-                </span>
-                <span className="text-ml ms-2">
-                  ({friends?.count})
-                </span>
+            <div className="flex flex-col flex-grow bg-primary-gray py-5">
+              <div className="flex items-end">
+                <span className="text-3xl font-bold">Amigos</span>
+                <span className="text-ml">({friends?.count})</span>
+                <Link
+                  href="/friends"
+                  className="text-primary-blue text-sm hover:underline ms-1"
+                >
+                  Ver mais
+                </Link>
               </div>
               <div className="flex bg-white rounded-lg shadow-md px-2 pt-4 mt-3">
                 <div className="flex flex-col items-center px-3 justify-top">

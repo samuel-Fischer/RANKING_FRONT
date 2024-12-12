@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/api/axiosInstance";
+import { Sidebar } from "lucide-react";
 
 interface Friend {
   id: number;
   nome: string;
   foto: string | null;
+  pontos: number;
 }
 
 const FriendsPage = () => {
@@ -44,6 +46,7 @@ const FriendsPage = () => {
                 id: amigo.id,
                 nome: amigo.nome,
                 foto: amigo.foto,
+                pontos: amigo.status.pontos,
               };
             })
             .filter((friend) => friend.id !== userId); // Remove o usuário logado da lista
@@ -71,49 +74,57 @@ const FriendsPage = () => {
     return <p className="text-red-500">{error}</p>;
   }
 
+  const getRanking = (points: number) => {
+    return Math.max(7 - Math.floor(points / 500), 1);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <h1 className="text-3xl font-bold mb-6 text-primary-blue">Todos os Amigos</h1>
-      {friends.length === 0 ? (
-        <p>Você ainda não tem amigos adicionados.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {friends.map((friend) => (
-            <div
-              key={friend.id}
-              className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-52 h-64 flex flex-col items-center"
-            >
-              <div className="flex justify-center mt-4">
-                <img
-                  src={
-                    friend.foto
-                      ? `http://localhost:3000/usuarios/foto/${friend.foto}`
-                      : "/default-profile.png"
-                  }
-                  alt={`Foto de ${friend.nome}`}
-                  className="rounded-full w-20 h-20"
-                />
-              </div>
-              <div className="flex flex-col mt-5 text-center">
-                <p className="text-primary-blue text-2xl font-bold">{friend.nome}</p>
-                <span className="text-gray-400 text-sm hover:text-gray-300 hover:cursor-pointer">
-                  <a href={`/profile/${friend.id}`} className="relative">
-                    Ver Perfil
-                  </a>
-                </span>
-                <div className="flex justify-center">
-                  <button
-                    className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4"
-                  >
-                    Desafiar
-                  </button>
+    <>
+      <Sidebar></Sidebar>
+      <div className="flex flex-col items-center justify-center p-8">
+        <h1 className="text-3xl font-bold mb-6 text-primary-blue">Todos os Amigos</h1>
+        {friends.length === 0 ? (
+          <p>Você ainda não tem amigos adicionados.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {friends.map((friend) => (
+              <div
+                key={friend.id}
+                className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-64 h-80 flex flex-col items-center"
+              >
+                <div className="flex justify-center mt-4">
+                  <img
+                    src={
+                      friend.foto
+                        ? `http://localhost:3000/usuarios/foto/${friend.foto}`
+                        : "/default-profile.png"
+                    }
+                    alt={`Foto de ${friend.nome}`}
+                    className="rounded-full w-20 h-20"
+                  />
+                </div>
+                <div className="flex flex-col mt-5 text-center">
+                  <p className="text-primary-blue text-2xl font-bold">{friend.nome}</p>
+                  <span className="text-gray-400 text-sm hover:text-gray-300 hover:cursor-pointer">
+                    <a href={`/profile/${friend.id}`} className="relative">
+                      Ver Perfil
+                    </a>
+                  </span>
+                  <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.pontos ?? 0)}</span>
+                  <div className="flex justify-center">
+                    <button
+                      className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4"
+                    >
+                      Desafiar
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
