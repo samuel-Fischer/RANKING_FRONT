@@ -1,6 +1,5 @@
 'use client';
-import React, { use } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LogOut, UserCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -170,29 +169,32 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="bg-primary-gray py-5 px-10">
-            <div className="flex flex-col items-start">
-              <span className="text-3xl font-bold">
-                Ranking
-              </span>
-            </div>
-            <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
-              <RankingTable />
-            </div>
-          </div>
+          <div className="flex flex-wrap bg-primary-gray">
 
-          <div className="bg-primary-gray py-5 px-10">
-            <div className="flex items-center">
-              <span className="text-3xl font-bold">
-                Amigos
-              </span>
-              <span className="text-ml ms-2">
-                ({friends?.count})
-              </span>
+            <div className="bg-primary-gray py-5 px-10">
+              <div className="flex flex-col items-start">
+                <span className="text-3xl font-bold">
+                  Ranking
+                </span>
+              </div>
+              <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
+                <RankingTable />
+              </div>
             </div>
-            <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
-              <div className="flex flex-col items-center px-3 justify-top">
-                <FriendsList />
+
+            <div className="bg-primary-gray py-5 px-10">
+              <div className="flex items-center">
+                <span className="text-3xl font-bold">
+                  Amigos
+                </span>
+                <span className="text-ml ms-2">
+                  ({friends?.count})
+                </span>
+              </div>
+              <div className="flex bg-white rounded-lg shadow-md px-2 pt-4 mt-3">
+                <div className="flex flex-col items-center px-3 justify-top">
+                  <FriendsList />
+                </div>
               </div>
             </div>
           </div>

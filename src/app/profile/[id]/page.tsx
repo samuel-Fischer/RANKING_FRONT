@@ -1,13 +1,15 @@
 'use client';
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { ArrowLeft, UserRoundPlus } from "lucide-react";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import perfil from '../../home/perfil.png';
 import axiosInstance from "@/api/axiosInstance";
 import StatusBarGames from "@/components/StatusBarGames";
 import StatusBarRanking from "@/components/StatusBarRanking";
 import MatchHistory from "@/components/MatchHistory";
-import { ArrowLeft, UserRoundPlus } from "lucide-react";
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -123,16 +125,17 @@ const Profile = ({ params }: Props) => {
       axiosInstance.post(`mensagens`, {
         remetenteId: loggedUser?.id,
         destinatarioId: params.id,
-        mensagem: `Gostaria de desafiar você para uma partida!`,
+        mensagem: `desafiou você para uma partida!`,
         tipo: "desafio"
       }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
         }
-      }
-      );
+      });
+      toast.success("Desafio enviado com sucesso!");
     } catch (error) {
       console.error('Error challenging', error);
+      toast.error("Erro ao tentar desafiar!");
     }
   };
 
@@ -146,8 +149,10 @@ const Profile = ({ params }: Props) => {
         }
       }
       );
+      toast.success("Pedido de amizade enviado com sucesso!");
     } catch (error) {
       console.error('Error adding friend', error);
+      toast.success("Erro ao enviar pedido de amizade!");
     }
   };
 
@@ -163,6 +168,19 @@ const Profile = ({ params }: Props) => {
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
       <div className="flex bg-primary-blue">
         <div className="flex m-3 text-blue-300">
           <button onClick={() => window.location.href = '/home'}>

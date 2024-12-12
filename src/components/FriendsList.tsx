@@ -1,40 +1,153 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Slide, toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import perfil from "../app/home/perfil.png";
+import axiosInstance from "@/api/axiosInstance";
 
-const user = {
-  nome: "Usuário",
+const getUserFromLocalStorage = () => {
+  const user = localStorage.getItem("auth.user");
+  return user ? JSON.parse(user) : null;
+};
+
+type User = {
+  id: string;
+}
+
+type Friend = {
+  id: number;
+  nome: string;
+  foto: string | null;
+  // pontos: number;
 };
 
 const FriendsList = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [friends, setFriends] = useState<Friend[]>([]);
+
+  useEffect(() => {
+    const storedUser = getUserFromLocalStorage();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
+  useEffect(() => {
+    async function fetchFriends() {
+      if (user) {
+        try {
+          const response = await axiosInstance.get("/amizades", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth.token")}`,
+            },
+          });
+          const data = response.data;
+
+          const mappedFriends = data.map((amizade: any) => {
+            const amigo =
+              amizade.usuario.id === Number(user.id)
+                ? amizade.amigo
+                : amizade.usuario;
+            return {
+              id: amigo.id,
+              nome: amigo.nome,
+              foto: amigo.foto,
+            };
+          });
+
+          setFriends(mappedFriends);
+        } catch (error) {
+          console.error("Error fetching friends", error);
+        }
+      }
+    }
+
+    fetchFriends();
+  }, [user]);
+
+  const handleChallenge = (id: number) => {
+    try {
+      axiosInstance.post(`mensagens`, {
+        remetenteId: user?.id,
+        destinatarioId: id,
+        mensagem: `desafiou você para uma partida!`,
+        tipo: "desafio"
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+        }
+      }
+      );
+      toast.success("Desafio enviado com sucesso!");
+
+    } catch (error) {
+      console.error('Error challenging', error);
+      toast.error("Erro ao enviar o Desafio!");
+
+    }
+  };
+
+  // const getRanking = (points: number) => {
+  //   return Math.max(7 - Math.floor(points / 500), 1);
+  // };
+
   return (
     <>
-      <div className="flex flex-col items-center justify-center">
-        <div className="bg-gray-100 border-collapse border rounded-lg border-gray-300 font-bold">
-          <div>
-            <Image src={perfil} alt="Foto de Perfil" className="rounded-full bg-blue-200 w-28 h-28 mx-10 mt-5">
-            </Image>
-          </div>
-          <div className="flex flex-col mt-5">
-            <p className="text-primary-blue justify-center text-2xl font-bold flex gap-2">
-              {user?.nome}
-            </p>
-            <span className="text-gray-400 text-sm hover:text-gray-300 hover:cursor-pointer">
-              <Link href={user?.nome ? "/profile" : "/profile"} className="flex gap-2 justify-center relative">Ver Perfil</Link>
-            </span>
-            <span className="flex text-primary-blue justify-center text-ml mt-3">
-              Nível 1
-            </span>
-            <div>
-
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 items-center justify-center gap-4 mb-4">
+        {friends.slice(0, 4).map((friend) => (
+          <div
+            className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-52 h-64 flex flex-col items-center"
+            key={friend.id}
+          >
+            <div className="flex justify-center mt-4">
+              <Image
+                src={
+                  friend.foto
+                    ? `http://localhost:3000/usuarios/foto/${friend.foto}`
+                    : perfil.src
+                }
+                alt="Foto do amigo"
+                width={80}
+                height={80}
+                className="rounded-full"
+              />
             </div>
-            <div className="flex button justify-center bg-primary-blue py-2 px-4 rounded-3xl m-4">
-              <span className="text-white">Desafiar</span>
+            <div className="flex flex-col mt-5 text-center">
+              <p className="text-primary-blue text-2xl font-bold">{friend.nome}</p>
+              <span className="text-gray-400 text-sm hover:text-gray-300 hover:cursor-pointer">
+                <Link
+                  href={`/profile/${friend.id}`}
+                  className="relative"
+                >
+                  Ver Perfil
+                </Link>
+              </span>
+              {/* <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.pontos ?? 0)}</span> */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => handleChallenge(friend.id)}
+                  className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4">
+                  Desafiar
+                </button>
+              </div>
             </div>
           </div>
-
-        </div>
+        ))}
       </div>
     </>
   );
