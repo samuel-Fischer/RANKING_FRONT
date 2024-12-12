@@ -5,6 +5,7 @@ import axiosInstance from "@/api/axiosInstance";
 import ModalInput from "./ModalInput";
 import { SearchBarOponents } from "./SearchBarOponents";
 import { X } from "lucide-react";
+import { Slide, toast, ToastContainer } from "react-toastify";
 
 type User = {
   id: number;
@@ -144,97 +145,117 @@ const MatchModal = ({ isVisible, onClose }: MatchModalProps) => {
       });
 
       if (response.status === 201) {
-        alert("Partida cadastrada com sucesso!");
-        onClose();
-      }
+        toast.success("Partida cadastrada com sucesso!");
+        const timerDuration = 5000;
+    
+        setTimeout(() => {
+            onClose();
+        }, timerDuration);
+    }
     } catch (error) {
       console.error('Error fetching results:', error);
+      toast.error("Erro ao cadastrada partida!");
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="w-[500px] flex flex-col">
-        <button className="flex items-end justify-end" onClick={onClose}>
-          <X className="text-gray-100 w-8 h-8 text-xl place-self-end" strokeWidth={3} />
-        </button>
-        <div className="flex flex-col max-w-lg p-6 space-y-4 bg-white rounded-lg shadow-lg">
-          <div className="w-full flex text-primary-blue justify-center">
-            <p className="text-2xl font-bold text-center">Cadastrar Partida</p>
-          </div>
-
-          <div className="flex w-full space-x-4">
-            <div className="flex flex-col items-center w-1/3 p-4 space-y-4 bg-blue-500 rounded-lg">
-              <p className="w-full text-white text-center">TIME 1</p>
-              <ModalInput
-                value={team1.player1.name}
-                onClick={() => selectPlayer("team1", "player1")}
-                selecionado={team1.player1.selected}
-              />
-              <ModalInput
-                value={team1.player2.name}
-                onClick={() => selectPlayer("team1", "player2")}
-                selecionado={team1.player2.selected}
-              />
-              <span className="w-full text-white text-center">X</span>
-              <ModalInput
-                value={team2.player1.name}
-                onClick={() => selectPlayer("team2", "player1")}
-                selecionado={team2.player1.selected}
-              />
-              <ModalInput
-                value={team2.player2.name}
-                onClick={() => selectPlayer("team2", "player2")}
-                selecionado={team2.player2.selected}
-              />
-              <p className="w-full text-white text-center">TIME 2</p>
+    <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Slide}
+      />
+      <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div className="w-[500px] flex flex-col">
+          <button className="flex items-end justify-end" onClick={onClose}>
+            <X className="text-gray-100 w-8 h-8 text-xl place-self-end" strokeWidth={3} />
+          </button>
+          <div className="flex flex-col max-w-lg p-6 space-y-4 bg-white rounded-lg shadow-lg">
+            <div className="w-full flex text-primary-blue justify-center">
+              <p className="text-2xl font-bold text-center">Cadastrar Partida</p>
             </div>
 
-            <div className="flex flex-col items-center w-2/3 p-4 space-y-4 bg-gray-100 rounded-lg">
-              <SearchBarOponents setSuggestions={setSuggestions} suggestions={suggestions} handleUserClick={handleSelectPlayer} />
-            </div>
-          </div>
-          <div className="flex flex-col items-end justify-end">
             <div className="flex w-full space-x-4">
-              <div className="flex-1 flex flex-col items-center">
-                <p className="text-center">TIME 1</p>
-                <select
-                  className="p-1 rounded-md text-black text-center border-2"
-                  required
-                  value={results.results1}
-                  onChange={(e) => setResults({ ...results, results1: +(e.target.value) })}
-                >
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={num}>{num}</option>
-                  ))}
-                </select>
+              <div className="flex flex-col items-center w-1/3 p-4 space-y-4 bg-blue-500 rounded-lg">
+                <p className="w-full text-white text-center">TIME 1</p>
+                <ModalInput
+                  value={team1.player1.name}
+                  onClick={() => selectPlayer("team1", "player1")}
+                  selecionado={team1.player1.selected}
+                />
+                <ModalInput
+                  value={team1.player2.name}
+                  onClick={() => selectPlayer("team1", "player2")}
+                  selecionado={team1.player2.selected}
+                />
+                <span className="w-full text-white text-center">X</span>
+                <ModalInput
+                  value={team2.player1.name}
+                  onClick={() => selectPlayer("team2", "player1")}
+                  selecionado={team2.player1.selected}
+                />
+                <ModalInput
+                  value={team2.player2.name}
+                  onClick={() => selectPlayer("team2", "player2")}
+                  selecionado={team2.player2.selected}
+                />
+                <p className="w-full text-white text-center">TIME 2</p>
               </div>
-              <div className="flex-1 flex flex-col items-center">
-                <p className="text-center">TIME 2</p>
-                <select
-                  className="p-1 rounded-md text-black text-center border-2"
-                  required
-                  value={results.results2}
-                  onChange={(e) => setResults({ ...results, results2: +(e.target.value) })}
-                >
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={num}>{num}</option>
-                  ))}
-                </select>
+
+              <div className="flex flex-col items-center w-2/3 p-4 space-y-4 bg-gray-100 rounded-lg">
+                <SearchBarOponents setSuggestions={setSuggestions} suggestions={suggestions} handleUserClick={handleSelectPlayer} />
               </div>
             </div>
-            <div className="flex w-full space-x-4 mt-3">
-              <button
-                className="flex-1 p-1 rounded-md bg-green-500 text-white text-center px-10 py-2"
-                onClick={handleFetchResults}
-              >
-                Enviar Resultados
-              </button>
+            <div className="flex flex-col items-end justify-end">
+              <div className="flex w-full space-x-4">
+                <div className="flex-1 flex flex-col items-center">
+                  <p className="text-center">TIME 1</p>
+                  <select
+                    className="p-1 rounded-md text-black text-center border-2"
+                    required
+                    value={results.results1}
+                    onChange={(e) => setResults({ ...results, results1: +(e.target.value) })}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={num}>{num}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-1 flex flex-col items-center">
+                  <p className="text-center">TIME 2</p>
+                  <select
+                    className="p-1 rounded-md text-black text-center border-2"
+                    required
+                    value={results.results2}
+                    onChange={(e) => setResults({ ...results, results2: +(e.target.value) })}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={num}>{num}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex w-full space-x-4 mt-3">
+                <button
+                  className="flex-1 p-1 rounded-md bg-green-500 text-white text-center px-10 py-2"
+                  onClick={handleFetchResults}
+                >
+                  Enviar Resultados
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -18,7 +18,7 @@ const getUserFromLocalStorage = () => {
 };
 
 type User = {
-  id: string;
+  id: number;
   nome: string;
   email: string;
   foto: string;

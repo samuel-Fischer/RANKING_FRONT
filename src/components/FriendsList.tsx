@@ -13,7 +13,7 @@ const getUserFromLocalStorage = () => {
 };
 
 type User = {
-  id: string;
+  id: number;
 }
 
 type Friend = {
