@@ -1,6 +1,3 @@
 {
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "off",
-    "react-hooks/rules-of-hooks": "off"
-  }
+  "extends": ["next/core-web-vitals", "next/typescript"]
 }
