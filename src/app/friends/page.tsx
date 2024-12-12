@@ -1,13 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/api/axiosInstance";
-import { Sidebar } from "lucide-react";
+import Sidebar from "@/components/Sidebar";
+import Image from "next/image";
 
 interface Friend {
   id: number;
   nome: string;
   foto: string | null;
-  pontos: number;
+  status: {
+    pontos: number;
+  };
+}
+
+interface Amizade {
+  usuario: Friend;
+  amigo: Friend;
 }
 
 const FriendsPage = () => {
@@ -37,7 +45,7 @@ const FriendsPage = () => {
         if (Array.isArray(response.data)) {
           // Filtra e mapeia os amigos corretamente
           const mappedFriends = response.data
-            .map((amizade: any) => {
+            .map((amizade: Amizade) => {
               const amigo =
                 amizade.usuario.id === userId
                   ? amizade.amigo
@@ -46,7 +54,9 @@ const FriendsPage = () => {
                 id: amigo.id,
                 nome: amigo.nome,
                 foto: amigo.foto,
-                pontos: amigo.status.pontos,
+                status: {
+                  pontos: amigo.status.pontos,
+                },
               };
             })
             .filter((friend) => friend.id !== userId); // Remove o usuário logado da lista
@@ -80,7 +90,7 @@ const FriendsPage = () => {
 
   return (
     <>
-      <Sidebar></Sidebar>
+      <Sidebar />
       <div className="flex flex-col items-center justify-center p-8">
         <h1 className="text-3xl font-bold mb-6 text-primary-blue">Todos os Amigos</h1>
         {friends.length === 0 ? (
@@ -93,7 +103,7 @@ const FriendsPage = () => {
                 className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-64 h-80 flex flex-col items-center"
               >
                 <div className="flex justify-center mt-4">
-                  <img
+                  <Image
                     src={
                       friend.foto
                         ? `http://localhost:3000/usuarios/foto/${friend.foto}`
@@ -101,6 +111,8 @@ const FriendsPage = () => {
                     }
                     alt={`Foto de ${friend.nome}`}
                     className="rounded-full w-20 h-20"
+                    width={80}
+                    height={80}
                   />
                 </div>
                 <div className="flex flex-col mt-5 text-center">
@@ -110,7 +122,7 @@ const FriendsPage = () => {
                       Ver Perfil
                     </a>
                   </span>
-                  <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.pontos ?? 0)}</span>
+                  <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.status.pontos ?? 0)}</span>
                   <div className="flex justify-center">
                     <button
                       className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4"

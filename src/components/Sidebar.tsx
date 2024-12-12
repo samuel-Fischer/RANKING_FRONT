@@ -2,7 +2,7 @@ import { LogOut, UserCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import perfil from "./perfil.png";
+import perfil from "../../src/app/home/perfil.png";
 
 import ModalSearchPlayers from "./ModalSearchPlayers";
 import MatchModal from "./MatchModal";
