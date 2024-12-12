@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { LogOut, UserCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,55 +47,32 @@ const Home = () => {
     }
   }, []);
 
-  useEffect(() => {
-    async function getPoints() {
-      if (user !== null) {
-        try {
-          const response = await axiosInstance.get(`/status/${user.id}`);
-          const data = response.data;
-          setUser({ ...user, points: data.pontos });
-        } catch (error) {
-          console.error('Error getting points', error);
-        }
+  const fetchUserDetails = useCallback(async () => {
+    if (user) {
+      try {
+        const [statusResponse, friendsResponse, positionResponse] = await Promise.all([
+          axiosInstance.get(`/status/${user.id}`),
+          axiosInstance.get(`/amizades/count/${user.id}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('auth.token')}` },
+          }),
+          axiosInstance.get(`/status/position/${user.id}`),
+        ]);
+
+        setUser((prevUser) => ({
+          ...prevUser!,
+          points: statusResponse.data.pontos,
+          position: positionResponse.data.position,
+        }));
+        setFriends({ count: friendsResponse.data.count });
+      } catch (error) {
+        console.error('Error fetching user details', error);
       }
     }
-    getPoints();
   }, [user]);
 
   useEffect(() => {
-    async function getCountFriends() {
-      if (user !== null) {
-        try {
-          const response = await axiosInstance.get(`/amizades/count/${user.id}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
-              },
-            });
-          const data = response.data;
-          setFriends({ count: data.count });
-        } catch (error) {
-          console.error('Error getting friends count', error);
-        }
-      }
-    }
-    getCountFriends();
-  }, [user]);
-
-  useEffect(() => {
-    async function getPosition() {
-      if (user !== null) {
-        try {
-          const response = await axiosInstance.get(`/status/position/${user.id}`);
-          const data = response.data;
-          setUser({ ...user, position: data.position });
-        } catch (error) {
-          console.error('Error getting position', error);
-        }
-      }
-    }
-    getPosition();
-  }, [user]);
+    fetchUserDetails();
+  }, [fetchUserDetails]);
 
   function logout() {
     localStorage.removeItem('auth.user');

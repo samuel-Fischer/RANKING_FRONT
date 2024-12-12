@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 type MatchHistory = {
   adversario1: string;
   adversario2: string;
-  placarEquipe1: number;
-  placarEquipe2: number;
+  placarTime: number;
+  placarAdversario: number;
   parceiro: string;
   data: string;
 }
@@ -22,8 +22,8 @@ const MatchHistory = ({ id }: { id: number }) => {
         setPartidas(data.map((partida: MatchHistory) => ({
           adversario1: partida.adversario1,
           adversario2: partida.adversario2,
-          placarEquipe1: partida.placarEquipe1,
-          placarEquipe2: partida.placarEquipe2,
+          placarTime: partida.placarTime,
+          placarAdversario: partida.placarAdversario,
           parceiro: partida.parceiro,
           data: partida.data
         })));
@@ -52,15 +52,15 @@ const MatchHistory = ({ id }: { id: number }) => {
           <tbody className="text-center">
             {
               partidas.map((partida, index) => (
-                <tr key={index} className={partida.placarEquipe1 > partida.placarEquipe2 ? "bg-green-400" : "bg-red-400"}>
+                <tr key={index} className={partida.placarTime > partida.placarAdversario ? "bg-green-400" : "bg-red-400"}>
                   <td className="py-2 px-4">
-                    {partida.placarEquipe1 > partida.placarEquipe2 ? "V" : "D"}
+                    {partida.placarTime > partida.placarAdversario ? "V" : "D"}
                   </td>
                   <td className="py-2 px-4">
                     {partida.parceiro}
                   </td>
                   <td className="py-2 px-4">
-                    {partida.placarEquipe1} x {partida.placarEquipe2}
+                    {partida.placarTime} x {partida.placarAdversario}
                   </td>
                   <td className="py-2 px-4">
                     {partida.adversario1}, {partida.adversario2}
