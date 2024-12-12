@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-
-import { SearchIcon, X } from "lucide-react";
-import { SearchBarOponents } from "./SearchBarOponents";
-import axiosInstance from "@/api/axiosInstance";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { SearchIcon, X } from "lucide-react";
+import axiosInstance from "@/api/axiosInstance";
 
 type User = {
   id: number;
@@ -19,6 +17,7 @@ type ModalSearchProps = {
 
 const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
   if (!isVisible) return null;
+
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -27,10 +26,10 @@ const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
       if (searchTerm) {
         try {
           const response = await axiosInstance.get(`/usuarios/nomeOuApelido/${searchTerm}`);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const transformedSuggestions = response.data.map((user: any) => ({
-            ...user,
+            id: user.id,
             name: user.nome,
+            photo: user.foto ? `http://localhost:3000/usuarios/foto/${user.foto}` : null, // Construção da URL completa
           }));
           setSuggestions(transformedSuggestions);
         } catch (error) {
@@ -42,12 +41,11 @@ const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
     };
 
     fetchSuggestions();
-  }, [searchTerm, setSuggestions]);
+  }, [searchTerm]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="flex flex-col">
-
         <button className="flex items-end justify-end" onClick={onClose}>
           <X className="text-gray-100 w-8 h-8 text-xl place-self-end" strokeWidth={3} />
         </button>
@@ -66,7 +64,7 @@ const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
                   <div className="relative">
                     <input
                       id="player-search"
-                      placeholder="procurar por jogador"
+                      placeholder="Procurar por jogador"
                       className="w-full pl-8 pb-1"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -76,16 +74,22 @@ const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
                 </div>
                 <div className="w-full space-y-2 cursor-pointer">
                   {suggestions.slice(0, 5).map((user) => (
-                    <Link href={`profile/${user.id}`}>
-                      <div key={user.id} className="flex items-center space-x-2 mt-2">
-                        {user?.photo ? (
-                          <Image src={user?.photo} alt={`Foto de ${user?.name}`} className="w-10 h-10 rounded-full"></Image>
+                    <Link key={user.id} href={`profile/${user.id}`}>
+                      <div className="flex items-center space-x-2 mt-2">
+                        {user.photo ? (
+                          <Image
+                            src={user.photo}
+                            alt={`Foto de ${user.name}`}
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 rounded-full"
+                          />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span>{user?.name[0]}</span>
+                            <span>{user.name[0]}</span>
                           </div>
                         )}
-                        <span>{user?.name}</span>
+                        <span>{user.name}</span>
                       </div>
                     </Link>
                   ))}
@@ -103,6 +107,6 @@ const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
       </div>
     </div>
   );
-}
+};
 
 export default ModalSearchPlayers;
