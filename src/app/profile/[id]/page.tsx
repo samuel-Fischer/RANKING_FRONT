@@ -10,6 +10,7 @@ import axiosInstance from "@/api/axiosInstance";
 import StatusBarGames from "@/components/StatusBarGames";
 import StatusBarRanking from "@/components/StatusBarRanking";
 import MatchHistory from "@/components/MatchHistory";
+import StatisticsCard from "@/components/StatisticsCard";
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -238,11 +239,18 @@ const Profile = ({ params }: Props) => {
         </div>
       </div>
 
-      <div className='flex flex-row flex-wrap text-2xl justify-center w-screen my-16'>
+      <div className='flex flex-row flex-wrap text-2xl justify-center w-screen my-16 gap-5'>
         <div className="flex columns-2">
           <div className="flex flex-col items-center px-3 justify-top">
             <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Últimos Confrontos</p>
             <MatchHistory id={user?.id ?? 0} />
+          </div>
+        </div>
+
+        <div className="flex columns-2">
+          <div className="flex flex-col items-center px-3 justify-top">
+            <p className="font-bold text-3xl py-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-600">Estatísticas</p>
+            <StatisticsCard amigoId={params.id} />
           </div>
         </div>
       </div>
