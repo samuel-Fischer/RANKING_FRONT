@@ -20,7 +20,9 @@ type Friend = {
   id: number;
   nome: string;
   foto: string | null;
-  // pontos: number;
+  status: {
+    pontos: number;
+  };
 };
 
 const FriendsList = () => {
@@ -54,6 +56,9 @@ const FriendsList = () => {
               id: amigo.id,
               nome: amigo.nome,
               foto: amigo.foto,
+              status: {
+                pontos: amigo.status.pontos,
+              },
             };
           });
 
@@ -81,17 +86,15 @@ const FriendsList = () => {
       }
       );
       toast.success("Desafio enviado com sucesso!");
-
     } catch (error) {
       console.error('Error challenging', error);
       toast.error("Erro ao enviar o Desafio!");
-
     }
   };
 
-  // const getRanking = (points: number) => {
-  //   return Math.max(7 - Math.floor(points / 500), 1);
-  // };
+  const getRanking = (points: number) => {
+    return Math.max(7 - Math.floor(points / 500), 1);
+  };
 
   return (
     <>
@@ -108,13 +111,12 @@ const FriendsList = () => {
         theme="light"
         transition={Slide}
       />
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full pb-4">
-
+      <div className="flex gap-x-4 gap-y-6">
+        <div className="flex xl:flex-wrap gap-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 pb-4">
           {friends.map((friend) => (
             <div
-              className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-48 h-64 flex flex-col items-center"
-              key={friend.id}
+            key={friend.id}
+            className="bg-gray-100 border rounded-lg border-gray-300 font-bold w-48 h-auto flex flex-col shadow items-center"
             >
               <div className="flex justify-center mt-4">
                 <Image
@@ -124,9 +126,9 @@ const FriendsList = () => {
                       : perfil.src
                   }
                   alt="Foto do amigo"
-                  width={80}
-                  height={80}
-                  className="rounded-full"
+                  width={65}
+                  height={64}
+                  className="w-full h-full rounded-full object-cover"
                 />
               </div>
               <div className="flex flex-col mt-5 text-center">
@@ -136,10 +138,11 @@ const FriendsList = () => {
                     Ver Perfil
                   </Link>
                 </span>
+                <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.status.pontos ?? 0)}</span>
                 <div className="flex justify-center">
                   <button
                     onClick={() => handleChallenge(friend.id)}
-                    className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4"
+                    className="bg-primary-blue text-white py-2 px-4 rounded-3xl my-4"
                   >
                     Desafiar
                   </button>

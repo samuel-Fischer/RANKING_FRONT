@@ -32,7 +32,7 @@ const RankingTable = () => {
   }, []);
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto w-full">
       <table className="min-w-full table-auto border-collapse border border-gray-300 rounded-lg">
         <thead className="border-collapse border border-gray-300">
           <tr>

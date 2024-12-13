@@ -146,17 +146,17 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap md:space-x-6 bg-primary-gray ml-80 p-4">
-            <div className="flex flex-col flex-grow bg-primary-gray py-5 me-10">
+          <div className="flex flex-wrap md:space-x-6 ml-80 p-4 xl:flex-nowrap w-full lg:w-2/3">
+            <div className="flex flex-col pt-5">
               <div className="flex flex-col items-start">
                 <span className="text-3xl font-bold">Ranking</span>
               </div>
-              <div className="flex bg-white rounded-lg shadow-md p-4 mt-3">
+              <div className="flex bg-white rounded-lg shadow-md p-4 mt-3 ">
                 <RankingTable />
               </div>
             </div>
 
-            <div className="flex flex-col flex-grow bg-primary-gray py-5">
+            <div className="flex flex-col pt-5">
               <div className="flex items-end">
                 <span className="text-3xl font-bold">Amigos</span>
                 <span className="text-ml">({friends?.count})</span>
@@ -167,8 +167,8 @@ const Home = () => {
                   Ver mais
                 </Link>
               </div>
-              <div className="flex bg-white rounded-lg shadow-md px-2 pt-4 mt-3">
-                <div className="flex flex-col items-center px-3 justify-top">
+              <div className="flex bg-white flex-auto rounded-lg shadow-md px-2 mt-3">
+                <div className="flex  items-center px-3 justify-top w-full lg:w-1/3 flex-wrap justify-start gap-4">
                   <FriendsList />
                 </div>
               </div>
