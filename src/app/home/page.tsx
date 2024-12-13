@@ -167,8 +167,8 @@ const Home = () => {
                   Ver mais
                 </Link>
               </div>
-              <div className="flex bg-white flex-auto rounded-lg shadow-md px-2 mt-3">
-                <div className="flex  items-center px-3 justify-top w-full lg:w-1/3 flex-wrap justify-start gap-4">
+              <div className="flex bg-white rounded-lg shadow-md px-2 mt-3">
+                <div className="flex  items-center px-3 justify-top w-full lg:w-1/3 flex-wrap gap-4">
                   <FriendsList />
                 </div>
               </div>
