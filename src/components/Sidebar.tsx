@@ -1,11 +1,12 @@
 import { LogOut, UserCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import perfil from "../../src/app/home/perfil.png";
 
 import ModalSearchPlayers from "./ModalSearchPlayers";
 import MatchModal from "./MatchModal";
+import axiosInstance from "@/api/axiosInstance";
 
 const getUserFromLocalStorage = () => {
   const user = localStorage.getItem('auth.user');
@@ -32,6 +33,29 @@ const Sidebar = () => {
       setUser(storedUser);
     }
   }, []);
+
+  const fetchUserDetails = useCallback(async () => {
+    if (user) {
+      try {
+        const [statusResponse, friendsResponse,] = await Promise.all([
+          axiosInstance.get(`/status/${user.id}`),
+          axiosInstance.get(`/status/position/${user.id}`),
+        ]);
+
+        setUser((prevUser) => ({
+          ...prevUser!,
+          points: statusResponse.data.pontos,
+          position: friendsResponse.data.position,
+        }));
+      } catch (error) {
+        console.error('Error fetching user details', error);
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, [fetchUserDetails]);
 
   function logout() {
     localStorage.removeItem('auth.user');
