@@ -16,10 +16,10 @@ type ModalSearchProps = {
 };
 
 const ModalSearchPlayers = ({ isVisible, onClose }: ModalSearchProps) => {
+  if (!isVisible) return null;
+
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-
-  if (!isVisible) return null;
 
   useEffect(() => {
     const fetchSuggestions = async () => {
