@@ -1,8 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { Slide, toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 import axiosInstance from "@/api/axiosInstance";
 import Sidebar from "@/components/Sidebar";
-import Image from "next/image";
+
+const getUserFromLocalStorage = () => {
+  const user = localStorage.getItem("auth.user");
+  return user ? JSON.parse(user) : null;
+};
 
 interface Friend {
   id: number;
@@ -13,6 +21,10 @@ interface Friend {
   };
 }
 
+type User = {
+  id: number;
+}
+
 interface Amizade {
   usuario: Friend;
   amigo: Friend;
@@ -20,8 +32,16 @@ interface Amizade {
 
 const FriendsPage = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+      const storedUser = getUserFromLocalStorage();
+      if (storedUser) {
+        setUser(storedUser);
+      }
+    }, []);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -76,6 +96,26 @@ const FriendsPage = () => {
     fetchFriends();
   }, []);
 
+  const handleChallenge = (id: number) => {
+    try {
+      axiosInstance.post(`mensagens`, {
+        remetenteId: user?.id,
+        destinatarioId: id,
+        mensagem: `desafiou você para uma partida!`,
+        tipo: "desafio"
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth.token')}`,
+        }
+      }
+      );
+      toast.success("Desafio enviado com sucesso!");
+    } catch (error) {
+      console.error('Error challenging', error);
+      toast.error("Erro ao enviar o Desafio!");
+    }
+  };
+
   if (loading) {
     return <p>Carregando...</p>;
   }
@@ -90,8 +130,9 @@ const FriendsPage = () => {
 
   return (
     <>
+      <ToastContainer transition={Slide} />
       <Sidebar />
-      <div className="flex flex-col items-center justify-center p-8">
+      <div className="flex flex-col items-center justify-center p-8 ml-80">
         <h1 className="text-3xl font-bold mb-6 text-primary-blue">Todos os Amigos</h1>
         {friends.length === 0 ? (
           <p>Você ainda não tem amigos adicionados.</p>
@@ -125,7 +166,8 @@ const FriendsPage = () => {
                   <span className="text-primary-blue text-ml mt-3">Nível {getRanking(friend?.status.pontos ?? 0)}</span>
                   <div className="flex justify-center">
                     <button
-                      className="bg-primary-blue text-white py-2 px-4 rounded-3xl mt-4"
+                      onClick={() => handleChallenge(friend.id)}
+                      className="bg-primary-blue text-white py-2 px-4 rounded-3xl my-4"
                     >
                       Desafiar
                     </button>
